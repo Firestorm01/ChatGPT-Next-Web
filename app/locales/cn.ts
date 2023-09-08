@@ -220,6 +220,20 @@ const cn = {
       Placeholder: "OpenAI API Key",
     },
 
+    EnableAOAI: "使用 Azure OpenAI",
+    AzureEndpoint: {
+      Title: "Azure OpenAI Endpoint",
+      Placeholder: "https://docs-test-001.openai.azure.com/",
+    },
+    AzureDeploymentName: {
+      Title: "Azure OpenAI 部署实例名称",
+      SubTitle: "此值将对应于在部署模型时为部署选择的自定义名称",
+      Placeholder: "部署自定义名称",
+    },
+    AOAIToken: {
+      Title: "Azure OpenAI API Key",
+      Placeholder: "Azure OpenAI API Key",
+    },
     Usage: {
       Title: "余额查询",
       SubTitle(used: any, total: any) {

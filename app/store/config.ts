@@ -64,6 +64,16 @@ export type ChatConfigStore = ChatConfig & {
 
 export type ModelConfig = ChatConfig["modelConfig"];
 
+export const AZURE_API_VERSION = [
+  {
+    name: "2023-05-15",
+    available: true,
+  },
+  {
+    name: "2023-03-15-preview",
+    available: true,
+  },
+];
 export function limitNumber(
   x: number,
   min: number,
@@ -77,12 +87,18 @@ export function limitNumber(
   return Math.min(max, Math.max(min, x));
 }
 
+
+export function limitModel(name: string) {
+  return DEFAULT_MODELS.some((m) => m.name === name && m.available)
+    ? name
+    : "gpt-3.5-turbo";
+}
 export const ModalConfigValidator = {
   model(x: string) {
-    return x as ModelType;
+    return limitModel(x) as ModelType;
   },
   max_tokens(x: number) {
-    return limitNumber(x, 0, 100000, 2000);
+    return limitNumber(x, 0, 32000, 2000);
   },
   presence_penalty(x: number) {
     return limitNumber(x, -2, 2, 0);

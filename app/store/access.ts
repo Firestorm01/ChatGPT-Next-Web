@@ -9,6 +9,11 @@ export interface AccessControlStore {
   accessCode: string;
   token: string;
 
+  enableAOAI: boolean;
+  azureEndpoint: string;
+  azureDeployName: string;
+  aoaiToken: string;
+
   needCode: boolean;
   hideUserApiKey: boolean;
   hideBalanceQuery: boolean;
@@ -18,6 +23,10 @@ export interface AccessControlStore {
 
   updateToken: (_: string) => void;
   updateCode: (_: string) => void;
+  switchAOAI: (_: boolean) => void;
+  updateAzureEndpoint: (_: string) => void;
+  updateAzureDeployName: (_: string) => void;
+  updateAOAIToken: (_: string) => void;
   updateOpenAiUrl: (_: string) => void;
   enabledAccessControl: () => boolean;
   isAuthorized: () => boolean;
@@ -35,6 +44,12 @@ export const useAccessStore = create<AccessControlStore>()(
     (set, get) => ({
       token: "",
       accessCode: "",
+
+      enableAOAI: false as boolean,
+      azureEndpoint: "",
+      azureDeployName: "",
+      aoaiToken: "",
+
       needCode: true,
       hideUserApiKey: false,
       hideBalanceQuery: false,
@@ -53,6 +68,19 @@ export const useAccessStore = create<AccessControlStore>()(
       updateToken(token: string) {
         set(() => ({ token: token?.trim() }));
       },
+
+      switchAOAI(switchStatus: boolean) {
+        set((state) => ({ enableAOAI: switchStatus }));
+      },
+      updateAzureEndpoint(azureEndpoint: string) {
+        set((state) => ({ azureEndpoint }));
+      },
+      updateAzureDeployName(azureDeployName: string) {
+        set((state) => ({ azureDeployName }));
+      },
+      updateAOAIToken(aoaiToken: string) {
+        set(() => ({ aoaiToken }));
+      },
       updateOpenAiUrl(url: string) {
         set(() => ({ openaiUrl: url?.trim() }));
       },
@@ -60,6 +88,13 @@ export const useAccessStore = create<AccessControlStore>()(
         get().fetch();
 
         // has token or has code or disabled access control
+        if (get().enableAOAI) {
+          return (
+            !!get().azureEndpoint &&
+            !!get().azureDeployName &&
+            !!get().aoaiToken
+          );
+        }
         return (
           !!get().token || !!get().accessCode || !get().enabledAccessControl()
         );
@@ -83,6 +118,10 @@ export const useAccessStore = create<AccessControlStore>()(
               DEFAULT_MODELS.forEach(
                 (m: any) => (m.available = !m.name.startsWith("gpt-4")),
               );
+            }
+
+            if ((res as any).botHello) {
+              BOT_HELLO.content = (res as any).botHello;
             }
           })
           .catch(() => {

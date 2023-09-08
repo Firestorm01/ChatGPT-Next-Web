@@ -73,6 +73,8 @@ export const useUpdateStore = create<UpdateStore>()(
       },
 
       async getLatestVersion(force = false) {
+        // 自動更新を止める
+        return;
         const versionType = get().versionType;
         let version =
           versionType === "date"

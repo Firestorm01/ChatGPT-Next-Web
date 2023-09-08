@@ -147,5 +147,9 @@ export function getHeaders() {
     );
   }
 
+  if (accessStore.enableAOAI && validString(accessStore.aoaiToken)) {
+    headers["api-key"] = accessStore.aoaiToken;
+  }
+
   return headers;
 }

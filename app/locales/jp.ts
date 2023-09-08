@@ -147,6 +147,21 @@ const jp: PartialLocaleType = {
       SubTitle: "自分のキーを使用してパスワードアクセス制限を迂回する",
       Placeholder: "OpenAI APIキー",
     },
+    EnableAOAI: "Azure OpenAI を使用する",
+    AzureEndpoint: {
+      Title: "Azure OpenAI Endpoint",
+      Placeholder: "https://docs-test-001.openai.azure.com/",
+    },
+    AzureDeploymentName: {
+      Title: "Azure OpenAI 展開インスタンス名",
+      SubTitle:
+        "Azure OpenAI を有効にした後、デプロイされたインスタンス名を入力してください",
+      Placeholder: "インスタンス名",
+    },
+    AOAIToken: {
+      Title: "Azure OpenAI API Key",
+      Placeholder: "Azure OpenAI API Key",
+    },
     Usage: {
       Title: "残高照会",
       SubTitle(used: any, total: any) {

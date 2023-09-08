@@ -4,7 +4,12 @@ import {
   OpenaiPath,
   REQUEST_TIMEOUT_MS,
 } from "@/app/constant";
-import { useAccessStore, useAppConfig, useChatStore } from "@/app/store";
+import {
+  useAccessStore,
+  useAppConfig,
+  useChatStore,
+  AZURE_API_VERSION,
+} from "@/app/store";
 
 import { ChatOptions, getHeaders, LLMApi, LLMModel, LLMUsage } from "../api";
 import Locale from "../../locales";
@@ -26,6 +31,18 @@ export interface OpenAIListModelResponse {
 
 export class ChatGPTApi implements LLMApi {
   private disableListModels = true;
+  public get ChatPath() {
+    const OPENAI_REQUEST_PATH = OpenaiPath.ChatPath;
+    const { enableAOAI, azureDeployName } = useAccessStore.getState();
+    if (enableAOAI && azureDeployName.length > 0) {
+      // For now azure api only support one version
+      const azureApiVersion = AZURE_API_VERSION[0].name;
+      const AZURE_REQUEST_PATH = `openai/deployments/${azureDeployName}/chat/completions?api-version=${azureApiVersion}`;
+      return AZURE_REQUEST_PATH;
+    }
+
+    return OPENAI_REQUEST_PATH;
+  }
 
   path(path: string): string {
     let openaiUrl = useAccessStore.getState().openaiUrl;
@@ -35,6 +52,12 @@ export class ChatGPTApi implements LLMApi {
       const isApp = !!getClientConfig()?.isApp;
       openaiUrl = isApp ? DEFAULT_API_HOST : apiPath;
     }
+
+    const { enableAOAI, azureEndpoint } = useAccessStore.getState();
+    if (enableAOAI && azureEndpoint.length > 0) {
+      openaiUrl = azureEndpoint;
+    }
+
     if (openaiUrl.endsWith("/")) {
       openaiUrl = openaiUrl.slice(0, openaiUrl.length - 1);
     }
@@ -79,7 +102,7 @@ export class ChatGPTApi implements LLMApi {
     options.onController?.(controller);
 
     try {
-      const chatPath = this.path(OpenaiPath.ChatPath);
+      const chatPath = this.path(this.ChatPath);
       const chatPayload = {
         method: "POST",
         body: JSON.stringify(requestPayload),
